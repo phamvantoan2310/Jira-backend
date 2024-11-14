@@ -335,6 +335,40 @@ const getTaskFreeByManagerId = async (req, res) => {
         )
     }
 }
+
+const removeFromProject = async (req, res) => {
+    try {
+        const taskId = req.params.taskId;
+        console.log("task id : ", taskId);
+
+        const authHeader = req.headers['authorization'];      //lấy user id để so sánh với manager id của task 
+        if (!authHeader) {
+            return res.status(401).json({
+                status: "ERR",
+                message: "Authorization header is missing"
+            });
+        }
+        const token = authHeader.split(" ")[1];
+        const userId = await jwtService.getUserId(token);
+
+
+
+        const removeFromProject = await TaskService.removeFromProject(taskId, userId)
+        if (!removeFromProject) {
+            return res.status(200).json({ "error": err })
+        }
+
+        return res.status(200).json(removeFromProject);
+
+    } catch (error) {
+        return (
+            res.status(404).json({
+                status: "ERR",
+                message: error
+            })
+        )
+    }
+}
 module.exports = {
     createTask,
     updateTask,
@@ -343,5 +377,6 @@ module.exports = {
     getTaskByNameInProject,
     assignTaskToUser,
     getTaskByTaskId,
-    getTaskFreeByManagerId
+    getTaskFreeByManagerId,
+    removeFromProject
 }

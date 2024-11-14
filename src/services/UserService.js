@@ -1,6 +1,10 @@
 const User = require('../models/UserModel')
+const MailService = require('./MailService')
 const bcrypt = require('bcrypt')
 const { genneralAccessToken, genneralRefreshToken } = require('./JsonWebTokenService')
+
+//OTP
+let OTPCode;
 
 
 const createUser = (newUser) => {
@@ -226,6 +230,108 @@ const getUser = (id) => {
     })
 }
 
+const changePassword = (email, data) => {
+    return new Promise(async (resolve, reject) => {
+
+        const hash = bcrypt.hashSync(data.password, 10)
+        try {
+            const checkUser = await User.findOne({
+                email: email
+            })
+
+            if (checkUser === null) {
+                resolve({
+                    status: "OK",
+                    message: "The user is not defined!"
+                })
+            }
+
+            const update_user = await User.findByIdAndUpdate(checkUser._id, {password: hash}, { new: true }).then(
+                result => {
+                    resolve({
+                        status: "OK",
+                        message: "Success",
+                        data: result
+                    })
+                }
+            ).catch(
+                err => {
+                    resolve({
+                        status: "OK",
+                        message: err,
+                    })
+                }
+            )
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+
+const forgotPassword = (to) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const isEmailAlready = await User.findOne({
+                email: to
+            })
+            if (isEmailAlready === null) {
+                resolve({
+                    status: "error",
+                    message: "The email is not exist yet!"
+                })
+            } else {
+                let OTP = generateOTP();
+
+                await MailService.sendEmail(to, "Xác thực JIRA clone", `Mã xác thực của bạn là: ${OTP}`);
+
+                OTPCode = OTP;
+                resolve({
+                    status: "OK",
+                    message: "email chứa mã OTP đã được gửi vào đến bạn.",
+                    data: OTP,
+                })
+            }
+
+
+        } catch (error) {
+            reject(error.message);
+        }
+    })
+}
+
+const verifyOTP = (OTP) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (OTPCode == OTP) {
+                resolve({
+                    status: "OK",
+                    message: "Xác minh thành công",
+                    data: OTP,
+                })
+            }else (
+                resolve({
+                    status: "OK",
+                    message: "OTP không chính xác",
+                    data: OTP,
+                })
+            )
+        } catch (error) {
+            reject(error.message);
+        }
+    })
+}
+
+const generateOTP = () => {
+    let otp = '';
+    const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+    for (let i = 0; i < 6; i++) {
+        otp += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return otp;
+}
+
 
 module.exports = {
     createUser,
@@ -233,5 +339,8 @@ module.exports = {
     updateUser,
     deleteUser,
     getAllUser,
-    getUser
+    getUser,
+    forgotPassword,
+    verifyOTP,
+    changePassword
 }

@@ -275,6 +275,44 @@ const addUserToProject = async (req, res) => {
     }
 }
 
+const removeUserFromProject = async (req, res) => {
+    try {
+        const projectId = req.params.IdProject;
+
+        const data = req.body;
+
+        console.log(" ddaay laf",projectId, data)
+
+        const authHeader = req.headers['authorization'];
+        if (!authHeader) {
+            return res.status(401).json({
+                status: "error",
+                message: "Authorization header is missing"
+            });
+        }
+        const token = authHeader.split(" ")[1];
+        const userId = await jwtService.getUserId(token);
+
+        const removeUser = await ProjectService.removeUserFromProject(projectId, data.userId, userId);
+        if (!removeUser) {
+            return res.status(500).json({ "error": removeUser.error })
+        }
+
+        return res.status(200).json({
+            status: 'OK',
+            data: removeUser,
+        });
+    } catch (error) {
+        console.log(error)
+        return (
+            res.status(500).json({
+                status: "error",
+                message: error
+            })
+        )
+    }
+}
+
 module.exports = {
     createProject,
     updateProject,
@@ -282,5 +320,6 @@ module.exports = {
     getProjectByManagerId,
     addTaskToProject,
     getProjectByProjectId,
-    addUserToProject
+    addUserToProject,
+    removeUserFromProject
 }

@@ -1,8 +1,7 @@
 const Task = require('../models/TaskModel')
 const Project = require('../models/ProjectModel')
-const User = require('../models/UserModel')
 const UserService = require('../services/UserService')
-const { SendEmail } = require('./Mailservice')
+const ProjectService = require('../services/ProjectService')
 
 
 const createTask = (userId, newTask) => {
@@ -66,12 +65,6 @@ const updateTask = (taskId, data, userId) => {
                     message: "authorization"
                 })
             }
-
-            const assign_to = await User.findOne({_id: task.assigned_to});
-            if(assign_to){
-                SendEmail(assign_to.email, task._id);
-            }
-
 
             await Task.findByIdAndUpdate(taskId, data, { new: true }).then(
                 result => {
@@ -277,7 +270,7 @@ const assignTaskToUser = (taskId, userId, managerId) => {
 const getTaskByTaskId = (userId, taskId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const getTask = await Task.findOne({ _id: taskId }).populate("assigned_to");
+            const getTask = await Task.findOne({ _id: taskId }).populate("assigned_to").populate("project");
 
             if (getTask) {
                 if (!getTask.manager == userId) {
@@ -341,6 +334,93 @@ const getTaskFreeByManagerId = (userId) => {
     })
 }
 
+const removeFromProject = (taskId, userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            const task = await Task.findOne({
+                _id: taskId
+            }).populate("project");
+
+            if (!task) {
+                resolve({
+                    status: "error",
+                    message: "Task is not underfined",
+                })
+            }
+
+            if(!task.project._id){
+                resolve({
+                    status: "error",
+                    message: "task is not in any project",
+                })
+            }
+            const project = await Project.findOne({_id: task.project._id});
+
+            if (userId != task.manager) {   //user phải là manager thì được update (so sánh userid từ token với manager id từ task)
+                resolve({
+                    status: "error",
+                    message: "authorization"
+                })
+            }
+
+            if(!project){
+                resolve({
+                    status: "error",
+                    message: "Project is not found"
+                })
+            }
+
+            const tasksInProject = project.tasks.filter(task => (task._id != taskId));  //xóa task khỏi tasks của project
+            project.tasks = tasksInProject;
+            const removeTaskFromProject = await project.save();
+
+            task.project = null;                                                        // xóa project ở task
+            const removeFromProject = await task.save();
+
+            if(!removeFromProject && !removeTaskFromProject){
+                resolve({
+                    status: "error",
+                    message: "remove task from project fail",
+                    error: "err:", err
+                })
+            }else{
+                resolve({
+                    status: "OK",
+                    message: "remove task from project success",
+                })
+            }
+
+
+
+
+
+
+            await Task.find.then(
+                result => {
+                    resolve({
+                        status: "OK",
+                        message: "update success",
+                        data: result
+                    })
+                }
+            ).catch(
+                err => {
+                    resolve({
+                        status: "error",
+                        message: "update fail",
+                        error: "err:", err
+                    })
+                }
+            )
+
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+
 module.exports = {
     createTask,
     updateTask,
@@ -349,5 +429,6 @@ module.exports = {
     getTaskByNameInProject,
     assignTaskToUser,
     getTaskByTaskId,
-    getTaskFreeByManagerId
+    getTaskFreeByManagerId,
+    removeFromProject
 }

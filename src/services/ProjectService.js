@@ -328,6 +328,50 @@ const addUserToProject = (projectId, users, userId) => {
     })
 }
 
+const removeUserFromProject = (projectId, userRemoveId, userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            const project = await Project.findOne({
+                _id: projectId
+            });
+
+            if (!project) {
+                resolve({                            //check project
+                    status: "error",
+                    message: "project is undefined"
+                })
+            } else if (userId != project.manager) {   //user phải là manager thì được update (so sánh userid từ token với userid từ project)
+                resolve({
+                    status: "error",
+                    message: "authorization"
+                })
+            }
+
+
+
+            project.users = project.users.filter(user=>(user?._id != userRemoveId));
+
+
+            const removeUserFromProject = await project.save()
+            if (!removeUserFromProject) {
+                resolve({
+                    status: "error",
+                    message: "remove user from project fail"
+                })
+            }
+
+            resolve({
+                status: "OK",
+                message: "remove user from project success",
+            })
+
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
 module.exports = {
     createProject,
     updateProject,
@@ -335,5 +379,6 @@ module.exports = {
     getProjectByManagerId,
     addTaskToProject,
     getProjectByProjectId,
-    addUserToProject
+    addUserToProject,
+    removeUserFromProject
 }

@@ -168,6 +168,77 @@ const getUser = async (req, res) => {
     }
 }
 
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(200).json({
+                status: "error",
+                message: "The email is required!"
+            })
+        }
+
+        const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        const isCheckEmail = regex.test(email);
+        if (!isCheckEmail) {
+            return res.status(200).json({
+                status: "error",
+                message: "The input is not Email"
+            })
+        }
+
+        const result = await UserService.forgotPassword(email);
+        return res.status(200).json(result)
+    } catch (error) {
+        return res.status(404).json({
+            message: error
+        })
+    }
+}
+
+const verifyOTP = async (req, res) => {
+    try {
+        const { OTP } = req.body;
+
+        if (!OTP) {
+            return res.status(200).json({
+                status: "error",
+                message: "The OTP is required!"
+            })
+        }
+
+        const result = await UserService.verifyOTP(OTP);
+        return res.status(200).json(result)
+    } catch (error) {
+        return res.status(404).json({
+            message: error
+        })
+    }
+}
+
+const changePassword = async (req, res) => {
+    try {
+        const email = req.params.email;
+        const data = req.body;
+
+        console.log(email, data);
+
+        if (!email) {
+            return res.status(200).json({
+                status: "ERR",
+                message: "The email is required!"
+            })
+        }
+
+        const result = await UserService.changePassword(email, data);
+        return res.status(200).json(result)
+    } catch (error) {
+        return res.status(404).json({
+            message: error
+        })
+    }
+}
+
 
 module.exports = {
     createUser,
@@ -175,5 +246,8 @@ module.exports = {
     updateUser,
     deleteUser,
     getAllUser,
-    getUser
+    getUser,
+    forgotPassword,
+    verifyOTP,
+    changePassword
 }

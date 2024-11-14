@@ -13,4 +13,5 @@ router.get("/gettaskbymanagerid",AuthMiddleWare, TaskController.getTaskByManager
 router.get("/gettaskbytaskid/:taskId", TaskController.getTaskByTaskId)
 router.get("/gettaskbynameinproject/:projectId",AuthMiddleWare, TaskController.getTaskByNameInProject)
 router.get("/gettaskfreebymanagerid",AuthMiddleWare, TaskController.getTaskFreeByManagerId)
+router.put("/removefromproject/:taskId",AuthMiddleWare, TaskController.removeFromProject)
 module.exports = router

@@ -25,11 +25,10 @@ const AuthMiddleWare = (req, res, next) => {
     // Xác thực token
     jwt.verify(token, process.env.ACCESS_TOKEN, function (err, user) {
         if (err) {
-            console.log(err);
             if(err.name === 'TokenExpiredError'){
                 return res.status(401).json({
                     status: "ERR",
-                    message: "token exprired",
+                    message: "token expired",
                     expiredAt: err.expiredAt
                 })
             }

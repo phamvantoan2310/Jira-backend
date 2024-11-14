@@ -11,4 +11,5 @@ router.get("/getprojectbymanagerid",AuthMiddleWare, ProjectController.getProject
 router.put("/addtasktoproject/:projectId",AuthMiddleWare, ProjectController.addTaskToProject)
 router.get("/getprojectbyprojectid/:projectId",AuthMiddleWare, ProjectController.getProjectByProjectId)
 router.put("/addusertoproject/:projectId",AuthMiddleWare, ProjectController.addUserToProject)
+router.put("/removeuserfromproject/:IdProject",AuthMiddleWare, ProjectController.removeUserFromProject)
 module.exports = router

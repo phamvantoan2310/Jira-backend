@@ -51,8 +51,6 @@ const createProject = async (req, res) => {
 const updateProject = async (req, res) => {
     try {
         const projectId = req.params.projectId
-
-        console.log(projectId);
         const data = req.body
 
         const authHeader = req.headers['authorization'];
@@ -136,11 +134,8 @@ const getProjectByManagerId = async (req, res) => {
             });
         }
         const token = authHeader.split(" ")[1];
-        console.log(token);
         const userId = await jwtService.getUserId(token);
 
-
-        console.log(userId);
 
         await ProjectService.getProjectByManagerId(userId).then(
             result => {
@@ -214,7 +209,6 @@ const getProjectByProjectId = async (req, res) => {
             });
         }
         const token = authHeader.split(" ")[1];
-        console.log(token);
         const userId = await jwtService.getUserId(token);
 
         await ProjectService.getProjectByProjectId(userId, projectId).then(
@@ -256,7 +250,6 @@ const addUserToProject = async (req, res) => {
         const userId = await jwtService.getUserId(token);
 
         const addUser = await ProjectService.addUserToProject(projectId, data.users, userId)
-        console.log(addUser);
         if (!addUser) {
             return res.status(500).json({ "error": addUser.message })
         }
@@ -281,8 +274,6 @@ const removeUserFromProject = async (req, res) => {
 
         const data = req.body;
 
-        console.log(" ddaay laf",projectId, data)
-
         const authHeader = req.headers['authorization'];
         if (!authHeader) {
             return res.status(401).json({
@@ -303,7 +294,6 @@ const removeUserFromProject = async (req, res) => {
             data: removeUser,
         });
     } catch (error) {
-        console.log(error)
         return (
             res.status(500).json({
                 status: "error",

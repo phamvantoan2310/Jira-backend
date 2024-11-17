@@ -35,7 +35,6 @@ const createUser = (newUser) => {
 
             const hash = bcrypt.hashSync(password, 10)
 
-            console.log(hash);
 
             const createUser = await User.create({
                 name,
@@ -87,8 +86,6 @@ const loginUser = (loginUser) => {
                 id: checkUser.id
             })
 
-            console.log(access_token);
-
             resolve({
                 status: "OK",
                 message: "login success",
@@ -109,7 +106,7 @@ const updateUser = (id, data) => {
 
             if (checkUser === null) {
                 resolve({
-                    status: "OK",
+                    status: "err",
                     message: "The user is not defined!"
                 })
             }
@@ -125,7 +122,7 @@ const updateUser = (id, data) => {
             ).catch(
                 err => {
                     resolve({
-                        status: "OK",
+                        status: "err",
                         message: err,
                     })
                 }

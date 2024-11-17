@@ -3,8 +3,6 @@ const jwtService = require('../services/JsonWebTokenService')
 
 const createUser = async (req, res) => {
     try {
-        console.log(req.body);
-
         const { name, email, phone_number, password, confirm_password, gender, birthday, image } = req.body
 
         const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -38,8 +36,6 @@ const createUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        console.log(req.body);
-
         const { email, password } = req.body
 
         const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -150,8 +146,6 @@ const getUser = async (req, res) => {
         const token = authHeader.split(" ")[1];
         const userId = await jwtService.getUserId(token);
 
-        console.log(userId);
-
         const getUser = await UserService.getUser(userId).then(
             result => {
                 return res.status(200).json(result)
@@ -220,8 +214,6 @@ const changePassword = async (req, res) => {
     try {
         const email = req.params.email;
         const data = req.body;
-
-        console.log(email, data);
 
         if (!email) {
             return res.status(200).json({

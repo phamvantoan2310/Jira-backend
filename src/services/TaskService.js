@@ -171,14 +171,9 @@ const getTaskByManagerId = (userId) => {
 const getTaskByNameInProject = (projectId, taskName, userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-
-            console.log(projectId, ",", taskName, ",", userId)
-
             const project = await Project.findOne({  //lấy project với các task bằng populate
                 _id: projectId
             }).populate('tasks');
-
-            console.log(project)
 
             if (!project) {
                 resolve({

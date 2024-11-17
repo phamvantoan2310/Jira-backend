@@ -175,8 +175,6 @@ const getTaskByNameInProject = async (req, res) => {
         const projectId = req.params.projectId
         const taskName = req.query.taskName
 
-        console.log("projectId: ", projectId, "taskName: ", taskName)
-
         if (!projectId || !taskName) {
             return res.status(404).json({
                 status: "ERR",
@@ -339,7 +337,6 @@ const getTaskFreeByManagerId = async (req, res) => {
 const removeFromProject = async (req, res) => {
     try {
         const taskId = req.params.taskId;
-        console.log("task id : ", taskId);
 
         const authHeader = req.headers['authorization'];      //lấy user id để so sánh với manager id của task 
         if (!authHeader) {

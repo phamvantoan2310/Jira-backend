@@ -138,7 +138,7 @@ const getProjectByManagerId = (userId) => {
 
 
             if (result.status === "OK" && result.data) {
-                const getProject = await Project.find({ manager: userId }).then(   //lấy project bằng user id
+                const getProject = await Project.find({ manager: userId }).populate("manager").then(   //lấy project bằng user id
                     result => {
                         resolve({
                             status: "ok",
@@ -155,7 +155,6 @@ const getProjectByManagerId = (userId) => {
                     }
                 )
             } else {
-                console.log("message err: ", result.message);
                 resolve({
                     status: "ok",
                     message: "user is undefined"

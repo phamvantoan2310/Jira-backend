@@ -75,6 +75,18 @@ const updateUser = async (req, res) => {
             })
         }
 
+        if (data?.email) {
+            const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            const isCheckEmail = regex.test(data?.email)
+
+            if (!isCheckEmail) {
+                return res.status("error").json({
+                    status: "ERR",
+                    message: "The input is not Email"
+                })
+            }
+        }
+
         const result = await UserService.updateUser(userId, data);
         return res.status(200).json(result)
     } catch (error) {

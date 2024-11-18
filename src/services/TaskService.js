@@ -219,7 +219,7 @@ const assignTaskToUser = (taskId, userId, managerId) => {
             if (!task) {
                 resolve({
                     status: "error",
-                    message: "Task is not underfined",
+                    message: "Task is underfined",
                 })
             }
 
@@ -373,7 +373,7 @@ const removeFromProject = (taskId, userId) => {
             task.project = null;                                                        // xóa project ở task
             const removeFromProject = await task.save();
 
-            if(!removeFromProject && !removeTaskFromProject){
+            if(!removeFromProject || !removeTaskFromProject){
                 resolve({
                     status: "error",
                     message: "remove task from project fail",
@@ -386,28 +386,6 @@ const removeFromProject = (taskId, userId) => {
                 })
             }
 
-
-
-
-
-
-            await Task.find.then(
-                result => {
-                    resolve({
-                        status: "OK",
-                        message: "update success",
-                        data: result
-                    })
-                }
-            ).catch(
-                err => {
-                    resolve({
-                        status: "error",
-                        message: "update fail",
-                        error: "err:", err
-                    })
-                }
-            )
 
         } catch (error) {
             reject(error);

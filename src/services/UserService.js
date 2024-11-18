@@ -33,7 +33,7 @@ const createUser = (newUser) => {
                 })
             }
 
-            const hash = bcrypt.hashSync(password, 10)
+            const hash = bcrypt.hashSync(password, 10);
 
 
             const createUser = await User.create({

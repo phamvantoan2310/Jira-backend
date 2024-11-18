@@ -41,7 +41,6 @@ const AuthMiddleWare = (req, res, next) => {
         // Nếu token hợp lệ, tiếp tục xử lý
 
         if (user && user.id) {
-            console.log("true");
             req.user = user;  // Lưu user vào request để sử dụng trong các middleware khác
             next();  // Tiếp tục xử lý các middleware khác
         } else {

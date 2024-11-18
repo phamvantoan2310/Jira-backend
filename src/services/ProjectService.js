@@ -52,14 +52,14 @@ const updateProject = (projectId, data, userId) => {
 
             if (!project) {
                 resolve({
-                    status: "ok",
+                    status: "err",
                     message: "project is undefined"
                 })
             }
 
             if (userId != project.manager) {   //user phải là manager thì được update (so sánh userid từ token với userid từ project)
                 resolve({
-                    status: "ok",
+                    status: "err",
                     message: "authorization"
                 })
             }
@@ -67,7 +67,7 @@ const updateProject = (projectId, data, userId) => {
             const updateProject = await Project.findByIdAndUpdate(projectId, data, { new: true })
             if (!updateProject) {
                 resolve({
-                    status: "ok",
+                    status: "err",
                     message: "update fail"
                 })
             }
@@ -106,7 +106,7 @@ const deleteProject = (projectId, userId) => {
             }
 
             const tasks = project.tasks;
-            tasks.map(taskId=>{
+            tasks.map(taskId => {
                 TaskService.deleteTask(taskId, userId);
             })
 
@@ -169,21 +169,6 @@ const getProjectByManagerId = (userId) => {
 const addTaskToProject = (projectId, taskId, userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-
-            const checkTask = await Project.findOne({   //check task đã ở trong project nào đó chưa
-                tasks: taskId
-            }).populate('tasks');
-
-            if (checkTask) {
-                resolve({
-                    status: "error",
-                    message: "task is already in a project"
-                })
-            }
-
-
-
-
             const project = await Project.findOne({
                 _id: projectId
             });
@@ -209,8 +194,19 @@ const addTaskToProject = (projectId, taskId, userId) => {
                 })
             }
 
-            const addIdProjectToTask = await TaskService.updateTask(taskId, {project: projectId}, userId);  //thêm id project vào task để nhận diện xem task đó đã ở trong project nào chưa
-            if(!addIdProjectToTask){
+            const checkTask = await Project.findOne({   //check task đã ở trong project nào đó chưa
+                tasks: taskId
+            }).populate('tasks');
+
+            if (checkTask) {
+                resolve({
+                    status: "error",
+                    message: "task is already in a project"
+                })
+            }
+
+            const addIdProjectToTask = await TaskService.updateTask(taskId, { project: projectId }, userId);  //thêm id project vào task để nhận diện xem task đó đã ở trong project nào chưa
+            if (!addIdProjectToTask) {
                 resolve({
                     status: "error",
                     message: "add id project to task fail",
@@ -218,7 +214,7 @@ const addTaskToProject = (projectId, taskId, userId) => {
             }
 
             project.tasks.push(taskId);                 //thêm task id vào danh sách task và lưu project
-            if(!project.users.includes(task.assigned_to) && task.assigned_to !== ""){   //nếu task đã được giao và user không nằm trong project thì thêm vào project
+            if (!project.users.includes(task.assigned_to) && task.assigned_to !== "") {   //nếu task đã được giao cho user và user đó không nằm trong project thì thêm vào project
                 project.users.push(task.assigned_to);
             }
             const addTaskToProject = await project.save()
@@ -294,13 +290,13 @@ const addUserToProject = (projectId, users, userId) => {
 
             let userIdFail = [];
 
-            for( let userId of users){            //add user id vào project, nếu user không tìm thấy thì add vào userIdFail để thông báo
+            for (let userId of users) {            //add user id vào project, nếu user không tìm thấy thì add vào userIdFail để thông báo
                 const user = await UserService.getUser(userId);
-                if(!user.data){
+                if (!user.data) {
                     userIdFail.push(userId);  //không tìm thấy user
                     continue;
-                }else{
-                    if(!project.users.includes(userId)){  //thêm id nếu nó không nằm trong userlist của project trước đó
+                } else {
+                    if (!project.users.includes(userId)) {  //thêm id nếu nó không nằm trong userlist của project trước đó
                         project.users.push(userId);
                     }
                 }
@@ -349,7 +345,7 @@ const removeUserFromProject = (projectId, userRemoveId, userId) => {
 
 
 
-            project.users = project.users.filter(user=>(user?._id != userRemoveId));
+            project.users = project.users.filter(user => (user?._id != userRemoveId));
 
 
             const removeUserFromProject = await project.save()

@@ -32,7 +32,7 @@ const AuthMiddleWare = (req, res, next) => {
                     expiredAt: err.expiredAt
                 })
             }
-            return res.status(403).json({
+            return res.status(401).json({
                 status: "ERR",
                 message: "Invalid token"
             });
@@ -44,7 +44,7 @@ const AuthMiddleWare = (req, res, next) => {
             req.user = user;  // Lưu user vào request để sử dụng trong các middleware khác
             next();  // Tiếp tục xử lý các middleware khác
         } else {
-            return res.status(403).json({
+            return res.status(401).json({
                 status: "ERR",
                 message: "Invalid token payload"
             });

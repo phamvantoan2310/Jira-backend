@@ -83,7 +83,7 @@ const loginUser = (loginUser) => {
             }
 
             const access_token = await genneralAccessToken({
-                id: checkUser.id
+                id: checkUser._id
             })
 
             resolve({

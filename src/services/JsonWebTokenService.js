@@ -11,13 +11,13 @@ const genneralAccessToken = async (payload) => {
     return access_token;
 }
 
-const genneralRefreshToken = async (payload) => {
-    const refresh_token = JWT.sign({
-        payload
-    }, process.env.REFRESH_TOKEN, { expiresIn: "365d" })
+// const genneralRefreshToken = async (payload) => {
+//     const refresh_token = JWT.sign({
+//         payload
+//     }, process.env.REFRESH_TOKEN, { expiresIn: "365d" })
 
-    return refresh_token;
-}
+//     return refresh_token;
+// }
 
 
 const getUserId = (token) => {
@@ -43,6 +43,6 @@ const getUserId = (token) => {
 
 module.exports = {
     genneralAccessToken,
-    genneralRefreshToken,
+    // genneralRefreshToken,
     getUserId
 }

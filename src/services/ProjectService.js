@@ -7,7 +7,16 @@ const createProject = (userId, newProject) => {
     return new Promise(async (resolve, reject) => {
         const { name, description, start, due, instruction_file } = newProject
         try {
-
+            const project = await Project.findOne({   //lấy project
+                name: name
+            })
+            if(project){
+                resolve({
+                    status: "error",
+                    message: "project đã tồn tại",
+                    error: "err:", err
+                })
+            }
             const createProject = await Project.create({
                 name,
                 description,

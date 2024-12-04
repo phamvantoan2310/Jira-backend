@@ -3,7 +3,7 @@ const jwtService = require('../services/JsonWebTokenService')
 
 const createUser = async (req, res) => {
     try {
-        const { name, email, phone_number, password, confirm_password, gender, birthday, image } = req.body
+        const { name, email, phone_number, password, confirm_password, gender, birthday } = req.body
 
         const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         const isCheckEmail = regex.test(email)
@@ -28,7 +28,7 @@ const createUser = async (req, res) => {
         const result = await UserService.createUser(req.body);
         return res.status(200).json(result)
     } catch (error) {
-        return res.status(404).json({
+        return res.status(500).json({
             message: error
         })
     }
@@ -196,7 +196,7 @@ const forgotPassword = async (req, res) => {
         const result = await UserService.forgotPassword(email);
         return res.status(200).json(result)
     } catch (error) {
-        return res.status(404).json({
+        return res.status(500).json({
             message: error
         })
     }

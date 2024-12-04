@@ -272,7 +272,7 @@ const removeUserFromProject = async (req, res) => {
     try {
         const projectId = req.params.IdProject;
 
-        const data = req.body;
+        const data = req.body;  //id cần remove
 
         const authHeader = req.headers['authorization'];
         if (!authHeader) {

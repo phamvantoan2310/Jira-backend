@@ -150,7 +150,7 @@ const getTaskByManagerId = (userId) => {
                 ).catch(
                     err => {
                         resolve({
-                            status: "ok",
+                            status: "error",
                             message: "get task fail", err
                         })
                     }
@@ -158,7 +158,7 @@ const getTaskByManagerId = (userId) => {
             } else {
                 console.log("message err: ", result.message);
                 resolve({
-                    status: "ok",
+                    status: "error",
                     message: "user is undefined"
                 })
             }

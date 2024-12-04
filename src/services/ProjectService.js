@@ -332,7 +332,7 @@ const addUserToProject = (projectId, users, userId) => {
     })
 }
 
-const removeUserFromProject = (projectId, userRemoveId, userId) => {
+const removeUserFromProject = (projectId, removeUserId, userId) => {
     return new Promise(async (resolve, reject) => {
         try {
 
@@ -354,7 +354,7 @@ const removeUserFromProject = (projectId, userRemoveId, userId) => {
 
 
 
-            project.users = project.users.filter(user => (user?._id != userRemoveId));
+            project.users = project.users.filter(user => (user?._id != removeUserId));
 
 
             const removeUserFromProject = await project.save()
